@@ -9,7 +9,9 @@ import { FormControl, FormGroup, Validators, FormBuilder } from '@angular/forms'
 @Component({
     selector: 'edit-restaurant-container',
     template: ` 
+     <section class="editRestaurantContainer">
     <div>edit restaurant</div>
+    </section>
   `
 })
 

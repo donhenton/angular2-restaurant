@@ -1,7 +1,6 @@
 import { Component } from '@angular/core';
-import {EditRestaurantContainer} from './edit-restaurant-container'
- ;
-
+import {EditRestaurantContainer} from './edit-restaurant-container';
+import {EditReviewDTOContainer} from './edit-reviewDTO-container'
 
 @Component({
   selector: 'restaurant-component',
@@ -34,6 +33,7 @@ import {EditRestaurantContainer} from './edit-restaurant-container'
             </div>
             <div id="editControlGroup" class="grouping">
                     <edit-restaurant-container></edit-restaurant-container>
+                    <edit-reviewDTO-container></edit-reviewDTO-container>
             </div>
 
              
