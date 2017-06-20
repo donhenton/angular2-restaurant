@@ -55,6 +55,8 @@ gulp.task("libs", () => {
             'systemjs/dist/system.src.js',
             'reflect-metadata/Reflect.js',
             'rxjs/**/*.js',
+            'lodash/lodash.min.js',
+            'postal/lib/postal.min.js',
             'zone.js/dist/**',
             '@angular/**/bundles/**'
         ], {cwd: "node_modules/**"}) /* Glob required here. */

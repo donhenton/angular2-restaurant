@@ -11,6 +11,7 @@ import { FormControl, FormGroup, Validators, FormBuilder } from '@angular/forms'
     template: ` 
      <section class="editRestaurantContainer">
     <div>edit restaurant</div>
+    
     </section>
   `
 })

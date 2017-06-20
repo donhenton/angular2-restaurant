@@ -18,7 +18,10 @@
             '@angular/router': 'npm:@angular/router/bundles/router.umd.js',
             '@angular/forms': 'npm:@angular/forms/bundles/forms.umd.js',
             // other libraries
-            'rxjs': 'npm:rxjs'
+            'rxjs': 'npm:rxjs',
+            'postal': 'npm:postal/lib/postal.min.js',
+            'lodash': 'npm:lodash/lodash.min.js'
+             
         },
         // packages tells the System loader how to load when no filename and/or no extension
         packages: {
@@ -27,6 +30,9 @@
                 defaultExtension: 'js'
             },
             rxjs: {
+                defaultExtension: 'js'
+            },
+            postal: {
                 defaultExtension: 'js'
             }
         }

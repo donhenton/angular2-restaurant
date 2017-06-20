@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import {EditRestaurantContainer} from './edit-restaurant-container';
 import {EditReviewDTOContainer} from './edit-reviewDTO-container'
+import * as postal from "postal";
 
 @Component({
   selector: 'restaurant-component',
@@ -30,6 +31,7 @@ import {EditReviewDTOContainer} from './edit-reviewDTO-container'
        
             <div id="mainDisplayMessage">
                 {{displayMessage}}
+                <button (click)="sendMessage()" class="btn btn-primary">Send Message</button>
             </div>
             <div id="editControlGroup" class="grouping">
                     <edit-restaurant-container></edit-restaurant-container>
@@ -59,7 +61,11 @@ export class RestaurantComponent {
 
   }
 
-
+  sendMessage()
+  {
+    console.log("send message "+postal)
+     
+  }
    
 
 
