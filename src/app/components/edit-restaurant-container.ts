@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-
+import * as postal from "postal";
 import { FormControl, FormGroup, Validators, FormBuilder } from '@angular/forms';
 
 
@@ -45,7 +45,28 @@ export class EditRestaurantContainer {
     }
 
 
+    ngOnInit() {
+        console.log("init")
+        //  let s1:ISubscriptionDefinition = postal.subscribe(
 
+        //   {channel:"test",
+        //     topic: "test-topic",
+        //     callback: function(data,envelope)
+        //     {
+        //       console.log("got data "+JSON.stringify(envelope));
+        //     }
+
+
+        //   }
+
+
+        //  )
+        let cc: IChannelDefinition = postal.channel('test-channel');
+        let s1: ISubscriptionDefinition = cc.subscribe("*.test-topic", (data, envelope) => {
+             console.log("got data in main "+JSON.stringify(envelope));
+        })
+
+    }
 
 
 

@@ -50,10 +50,10 @@ import * as postal from "postal";
   
   `
 })
-export class RestaurantComponent {
+export class RestaurantComponent    {
 
   displayMessage: string;
-   
+  private   cc:IChannelDefinition  = postal.channel('test-channel');
 
   constructor( ) {
  
@@ -61,9 +61,17 @@ export class RestaurantComponent {
 
   }
 
+  ngOnInit()
+  {
+    console.log("init")
+ 
+      
+      
+  }
+
   sendMessage()
   {
-    console.log("send message "+postal)
+     this.cc.publish("fred.test-topic", {message: 'get a job'})
      
   }
    
