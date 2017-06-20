@@ -1,18 +1,20 @@
 import {NgModule}      from '@angular/core';
 import {BrowserModule} from '@angular/platform-browser';
-import {AppComponent} from "./app.component";
-import {FormsModule} from "@angular/forms";
+import {RestaurantComponent} from "./components/restaurant-component";
+import {EditRestaurantContainer} from './components/edit-restaurant-container'
+import {FormsModule,ReactiveFormsModule} from '@angular/forms';
+import { HttpModule } from '@angular/http';
+
 
 @NgModule({
     imports: [
-        BrowserModule,
-        FormsModule
+         BrowserModule,FormsModule,ReactiveFormsModule,HttpModule
     ],
     declarations: [
-        AppComponent
+        RestaurantComponent,EditRestaurantContainer
     ],
     providers: [],
-    bootstrap: [AppComponent]
+    bootstrap: [RestaurantComponent]
 })
 export class AppModule {
 }
