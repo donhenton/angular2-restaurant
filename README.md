@@ -6,3 +6,8 @@
 * https://github.com/iRainSystem/angular2-gulp-ts
 
 
+## Development
+* npm run start -- start the application and watch modes, prior to first type npm run build
+* npm run clean 
+* npm run compile
+
