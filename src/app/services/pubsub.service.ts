@@ -9,11 +9,12 @@ let _service:PubSubServiceImpl = null;
 
 
 export const RESTAURANT_TOPIC = "restaurant-topic"
-export const CRUD_WILDCARD_TOPIC = "*.crud."+ this.RESTAURANT_TOPIC;
-export const ADD_RESTAURANT_TOPIC = "add.crud."+ this.RESTAURANT_TOPIC;
-export const EDIT_RESTAURANT_TOPIC = "edit.crud."+ this.RESTAURANT_TOPIC;
-export const DELETE_RESTAURANT_TOPIC = "edit.crud."+ this.RESTAURANT_TOPIC;
+export const CRUD_WILDCARD_TOPIC = "*.crud."+ RESTAURANT_TOPIC;
+export const ADD_RESTAURANT_TOPIC = "ADD.crud."+ RESTAURANT_TOPIC;
+export const EDIT_RESTAURANT_TOPIC = "EDIT.crud."+ RESTAURANT_TOPIC;
+export const DELETE_RESTAURANT_TOPIC = "DELETE.crud."+ RESTAURANT_TOPIC;
 export const WAIT_TOPIC = "wait.topic";
+export const REFRESH_TOPIC = "refresh.topic."
 
 
 @Injectable()

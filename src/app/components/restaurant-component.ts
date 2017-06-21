@@ -8,6 +8,7 @@ import PubSubService,{PubSubSystem} from './../services/pubsub.service';
 import { Subject } from "rxjs/Subject";
 import {FeedbackMessage} from './../model/restaurant.interface';
 import * as postal from 'postal';
+import {ADD_RESTAURANT_TOPIC} from './../services/pubsub.service'
 
 @Component({
   selector: 'restaurant-component',
@@ -37,7 +38,7 @@ import * as postal from 'postal';
             <wait-indicator [isProcessing]="true"></wait-indicator>
             <div id="mainDisplayMessage">
                 {{displayMessage}}
-                <button (click)="sendMessage()" class="btn btn-primary">Send Message</button>
+               
             </div>
             <restaurant-list></restaurant-list>
             <div id="editControlGroup" class="grouping">
@@ -61,11 +62,12 @@ export class RestaurantComponent    {
 
   displayMessage: string;
   private   cc:IChannelDefinition  = postal.channel('test-channel');
+  private sub: PubSubSystem;
 
-  constructor( ) {
+  constructor( private subProvider: PubSubService) {
  
     this.displayMessage = "get a job, bozo";
-
+     this.sub = subProvider.getService();
   }
 
   ngOnInit()
@@ -76,13 +78,6 @@ export class RestaurantComponent    {
       
   }
 
-  sendMessage()
-  {
-     this.cc.publish("fred.test-topic", {message: 'get a job'})
-     
-  }
-   
-
-
+  
 
 }

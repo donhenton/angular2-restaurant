@@ -5,7 +5,7 @@ import { RestaurantListRow } from './restaurant-list-row';
 import PubSubService, { PubSubSystem } from './../services/pubsub.service';
 import { WaitRequest, RefreshMessage } from './../model/restaurant.interface';
 import * as postal from 'postal';
-import {CRUD_WILDCARD_TOPIC,WAIT_TOPIC} from './../services/pubsub.service'
+import { REFRESH_TOPIC,CRUD_WILDCARD_TOPIC, WAIT_TOPIC, ADD_RESTAURANT_TOPIC, DELETE_RESTAURANT_TOPIC, EDIT_RESTAURANT_TOPIC } from './../services/pubsub.service'
 
 @Component({
     selector: 'restaurant-list',
@@ -54,22 +54,10 @@ export class RestaurantList {
     private restaurantList: Restaurant[];// cannot place in constructor for some reason
     private doRoll: boolean = false;
     private selectedRowId = -1;
-    private crudSubscription:ISubscriptionDefinition;
+    private crudSubscription: ISubscriptionDefinition;
+    private refreshSubscription: ISubscriptionDefinition;
+    private subscriptions: ISubscriptionDefinition[] = [];
     private sub: PubSubSystem;
-
-    /*
-    
-        private deleteSubject: Subject<any>;
-        private editSubject: Subject<any>;
-        private junkSubject: Subject<any>;
-        private addSubject: Subject<any>;
-       
-        private waitSubject: Subject<WaitRequest>;
-       
-        private refreshSubscription: Subject<RefreshMessage>;
-    
-        */
- 
 
 
 
@@ -79,9 +67,13 @@ export class RestaurantList {
         private subProvider: PubSubService, ) {
         this.sub = subProvider.getService();
         this.restaurantList = [];
-        var channel:IChannelDefinition = this.sub.getChannel();
-        this.crudSubscription = channel.subscribe(CRUD_WILDCARD_TOPIC,
-                (data:any,envelope:IEnvelope) => this.handleCrudOperation(data ,envelope) );
+        this.crudSubscription = this.sub.getChannel().subscribe(CRUD_WILDCARD_TOPIC,
+            (data: any, envelope: IEnvelope) => this.handleCrudOperation(data, envelope));
+        this.refreshSubscription = this.sub.getChannel().subscribe(REFRESH_TOPIC,
+            (data: any, envelope: IEnvelope) => this.handleRefresh(data, envelope));
+
+        this.subscriptions.push(this.crudSubscription);
+        this.subscriptions.push(this.refreshSubscription);
 
         /*
         this.deleteSubject
@@ -121,25 +113,20 @@ export class RestaurantList {
 
     }
 
-    handleCrudOperation(data:any, envelope:IEnvelope)
-    {
-
+    handleCrudOperation(data: any, envelope: IEnvelope) {
+        console.log("in restaurant-list handleCrud " + envelope.topic + " not needed ");
     }
+    handleRefresh(data: RefreshMessage, envelope: IEnvelope) {
+        // console.log("in restaurant-list refresh " + JSON.stringify(envelope));
+        console.log('got refresh message')
+        if (data.selectedRestaurantId) {
+            //if this is an add, roll
+            this.selectedRowId = data.selectedRestaurantId;
 
 
-
-    performAdd() {
-        let emptyRestaurant = <Restaurant>{};
-        emptyRestaurant.id = -1;
-        emptyRestaurant.version = 1;
-        emptyRestaurant.name = "";
-        emptyRestaurant.city = "";
-        emptyRestaurant.state = "";
-        emptyRestaurant.zipCode = "";
-        // this.addSubject.next({selectedRestaurant: emptyRestaurant});
-
+        }
+        this.ngOnInit();
     }
-
 
 
     getRowClass(rowId) {
@@ -174,24 +161,26 @@ export class RestaurantList {
 
     }
 
-    ngOnDestroy()
-    {
-        if (this.crudSubscription)
-        {
-            this.crudSubscription.unsubscribe();
-            this.crudSubscription = null;
-        }
+    ngOnDestroy() {
+
+        this.subscriptions.forEach(s => {
+            if (s) {
+                
+                s.unsubscribe();
+                s = null;
+            }
+        })
+
     }
-    sendWait(state:boolean)
-    {
+    sendWait(state: boolean) {
         var waitMessage = <WaitRequest>{};
         waitMessage.state = state;
-        this.sub.getChannel().publish(WAIT_TOPIC,waitMessage);
+        this.sub.getChannel().publish(WAIT_TOPIC, waitMessage);
     }
 
     ngOnInit() {
-         // console.log("init "+this.rowItems)
-        
+
+
         this.restaurantService.getAllRestaurants()
             .subscribe(json => {
                 this.isLoading = false;
@@ -199,10 +188,10 @@ export class RestaurantList {
                 json.forEach(j => {
 
                     this.restaurantList.push(j)
-                   
+
                 })
-                 
-                 this.sendWait(false);
+
+                this.sendWait(false);
 
 
                 if (this.selectedRowId && this.selectedRowId > 0) {
@@ -236,18 +225,48 @@ export class RestaurantList {
             var confirmMessage = 'Do you want to delete "' + ev.selectedRestaurant.name + '" ?'
             var confirm = window.confirm(confirmMessage);
             if (confirm && confirm === true) {
-              //  this.deleteSubject.next(ev);
+                this.signalCRUDEvent("DELETE", ev);
             }
 
         }
         else {
-          //  this.editSubject.next(ev);
-            
+            this.signalCRUDEvent("EDIT", ev);
+
         }
 
 
 
     }
+
+    signalCRUDEvent(type: string, payload: any) {
+        let topic = null;
+        if (type === 'ADD') {
+            topic = ADD_RESTAURANT_TOPIC;
+        }
+        if (type === 'EDIT') {
+            topic = EDIT_RESTAURANT_TOPIC;
+        }
+        if (type === 'DELETE') {
+            topic = DELETE_RESTAURANT_TOPIC;
+        }
+        this.sub.getChannel().publish(topic, payload);
+    }
+
+
+    performAdd() {
+        let emptyRestaurant = <Restaurant>{};
+        emptyRestaurant.id = -1;
+        emptyRestaurant.version = 1;
+        emptyRestaurant.name = "";
+        emptyRestaurant.city = "";
+        emptyRestaurant.state = "";
+        emptyRestaurant.zipCode = "";
+        this.signalCRUDEvent("ADD", {selectedRestaurant: emptyRestaurant});
+
+
+    }
+
+
 
 
 }
