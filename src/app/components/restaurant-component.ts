@@ -60,19 +60,18 @@ import {ADD_RESTAURANT_TOPIC} from './../services/pubsub.service'
 })
 export class RestaurantComponent    {
 
-  displayMessage: string;
-  private   cc:IChannelDefinition  = postal.channel('test-channel');
+  private displayMessage: string;
   private sub: PubSubSystem;
 
-  constructor( private subProvider: PubSubService) {
+  constructor( private subProvider: PubSubService,private actionProvider: RestaurantActionService) {
  
     this.displayMessage = "get a job, bozo";
      this.sub = subProvider.getService();
+     
   }
 
   ngOnInit()
   {
-    console.log("init")
  
       
       

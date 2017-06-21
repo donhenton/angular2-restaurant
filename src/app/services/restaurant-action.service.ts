@@ -1,91 +1,74 @@
-import PubSubService,{PubSubSystem} from './pubsub.service';
+import PubSubService, { PubSubSystem } from './pubsub.service';
 import { RestaurantService } from './restaurant.service';
 import { WaitRequest, Restaurant, messageType, RefreshMessage } from './../model/restaurant.interface';
 import { Injectable } from '@angular/core';
 import FeedbackMessageImpl from './../model/FeedbackMessageImpl';
+import { FEEDBACK_TOPIC, REFRESH_TOPIC, EDIT_RESTAURANT_TOPIC,COMMIT_WILDCARD_TOPIC, WAIT_TOPIC, 
+    ADD_COMMIT_TOPIC, DELETE_COMMIT_TOPIC, SAVE_COMMIT_TOPIC } from './../services/pubsub.service'
+
 
 @Injectable()
 export class RestaurantActionService {
 
-/*
-    private refreshListSubject: Subject<RefreshMessage>;
-    private saveSubscription: Subject<any>;
-    private newRestaurantSubscription: Subject<any>;
-    private deleteRestaurantSubscription: Subject<any>;
-    private waitRequestSubject: Subject<WaitRequest>;
-    private feedbackSubject: Subject<any>;
-    private editSubject: Subject<any>;
-    */
-    private sub:PubSubSystem;
+    
+    private sub: PubSubSystem;
 
     constructor(private restaurantService: RestaurantService,
         private subProvider: PubSubService) {
 
         this.sub = subProvider.getService();
-        var channel = this.sub.getChannel();
-        /*
-        this.feedbackSubject = channel.subject(this.sub.getMessageTopic());
-        this.waitRequestSubject = channel.subject(this.sub.getWaitTopic());
-        this.refreshListSubject = channel.subject(this.sub.getRefreshTopic());
-        this.editSubject = channel.subject("edit.update." + this.sub.getRestaurantEditTopic());
-        this.saveSubscription = channel.observe("save." + this.sub.getRestaurantEditTopic());
-        this.newRestaurantSubscription = channel.observe("new." + this.sub.getRestaurantEditTopic());
-        this.deleteRestaurantSubscription = channel.observe("delete." + this.sub.getRestaurantEditTopic());
+       
+        this.sub.getChannel().subscribe(COMMIT_WILDCARD_TOPIC, (data, envelope: IEnvelope) => {
 
-        this.deleteRestaurantSubscription
-            .subscribe(
-            (data) => {
-
-                this.handleDelete(data);
-
-            },
-            (error) => {
-                console.log(JSON.stringify(error))
+            let action = envelope.topic.split(".")[0];
+            console.log(`got action ${action} in restaurant-action-service`)
+            if (action === "ADD") {
+                this.handleAdd(data);
             }
-
-            );
-
-        this.saveSubscription
-            .subscribe(
-            (data) => {
-
+            if (action === "SAVE") {
                 this.handleSave(data);
-
-            },
-            (error) => {
-                console.log(JSON.stringify(error))
+            }
+            if (action === "DELETE") {
+                this.handleDelete(data);
             }
 
-            );
-        this.newRestaurantSubscription
-            .subscribe(
-            (data) => {
 
-                this.handleNewRestaurant(data);
 
-            },
-            (error) => {
-                console.log(JSON.stringify(error))
-            }
-
-            );
-*/
+        });
+ 
     }
 
+    sendWait(state: boolean) {
+        var waitMessage = <WaitRequest>{};
+        waitMessage.state = state;
+        this.sub.getChannel().publish(WAIT_TOPIC, waitMessage);
+    }
+
+    sendFeedback(f: FeedbackMessageImpl) {
+        this.sub.getChannel().publish(FEEDBACK_TOPIC, f);
+    }
+
+    sendRefresh(refreshRequest)
+    {
+        this.sub.getChannel().publish(REFRESH_TOPIC, refreshRequest);
+    }
+
+
     handleDelete(data) {
+       
         this.restaurantService.deleteRestaurant(data.selectedRestaurant).subscribe(
 
             () => {
 
-                var waitMessage = <WaitRequest>{};
-                waitMessage.state = true;
-             //   this.waitRequestSubject.next(waitMessage);
+
+                this.sendWait(true);
+
                 let f = new FeedbackMessageImpl();
                 f.message = "Restaurant Deleted";
                 f.show = true;
                 f.type = messageType.info;
-               // this.feedbackSubject.next(f);
-               // this.refreshListSubject.next({ doRefresh: true, selectedRestaurantId: null })
+                this.sendFeedback(f);
+                this.sendRefresh({ doRefresh: true, selectedRestaurantId: null });
 
 
             },
@@ -94,22 +77,21 @@ export class RestaurantActionService {
         )
     }
 
-    handleNewRestaurant(data) {
+    handleAdd(data) {
         let f = new FeedbackMessageImpl();
         f.message = "Restaurant Added";
         f.show = true;
         f.type = messageType.info;
-        var waitMessage = <WaitRequest>{};
-        waitMessage.state = true;
-       // this.waitRequestSubject.next(waitMessage);
+        this.sendWait(true);
         this.restaurantService.addRestaurant(data).subscribe(
 
             (idInfo) => {
-               // this.feedbackSubject.next(f);
-               // this.refreshListSubject.next({ doRefresh: true, selectedRestaurantId: idInfo.id })
+                this.sendFeedback(f);
+                this.sendRefresh({ doRefresh: true, selectedRestaurantId: idInfo.id })
                 let newItem: Restaurant = { ...data };
                 newItem.id = idInfo.id;
-               // this.editSubject.next({ selectedRestaurant: newItem });
+                // this.editSubject.next({ selectedRestaurant: newItem });
+                this.sub.getChannel().publish(EDIT_RESTAURANT_TOPIC,{ selectedRestaurant: newItem })
 
             },
             err => { console.log(JSON.stringify(err)) }
@@ -125,14 +107,12 @@ export class RestaurantActionService {
         f.message = "Save completed";
         f.show = true;
         f.type = messageType.info;
-        var waitMessage = <WaitRequest>{};
-        waitMessage.state = true;
-       // this.waitRequestSubject.next(waitMessage);
+        this.sendWait(true)
         this.restaurantService.saveResaurant(data).subscribe(
 
             () => {
-               // this.feedbackSubject.next(f);
-               // this.refreshListSubject.next({ doRefresh: true, selectedRestaurantId: data.id })
+                this.sendFeedback(f);
+                this.sendRefresh({ doRefresh: true, selectedRestaurantId: data.id })
             },
             err => { console.log(JSON.stringify(err)) }
 

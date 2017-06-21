@@ -15,6 +15,11 @@ export const EDIT_RESTAURANT_TOPIC = "EDIT.crud."+ RESTAURANT_TOPIC;
 export const DELETE_RESTAURANT_TOPIC = "DELETE.crud."+ RESTAURANT_TOPIC;
 export const WAIT_TOPIC = "wait.topic";
 export const REFRESH_TOPIC = "refresh.topic."
+export const COMMIT_WILDCARD_TOPIC = '*.commit.topic';
+export const ADD_COMMIT_TOPIC = 'ADD.commit.topic';
+export const SAVE_COMMIT_TOPIC = 'SAVE.commit.topic';
+export const DELETE_COMMIT_TOPIC = 'DELETE.commit.topic';
+export const FEEDBACK_TOPIC = 'feedback.topic';
 
 
 @Injectable()

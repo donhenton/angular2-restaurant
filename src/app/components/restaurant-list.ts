@@ -5,7 +5,7 @@ import { RestaurantListRow } from './restaurant-list-row';
 import PubSubService, { PubSubSystem } from './../services/pubsub.service';
 import { WaitRequest, RefreshMessage } from './../model/restaurant.interface';
 import * as postal from 'postal';
-import { REFRESH_TOPIC,CRUD_WILDCARD_TOPIC, WAIT_TOPIC, ADD_RESTAURANT_TOPIC, DELETE_RESTAURANT_TOPIC, EDIT_RESTAURANT_TOPIC } from './../services/pubsub.service'
+import { DELETE_COMMIT_TOPIC,REFRESH_TOPIC,CRUD_WILDCARD_TOPIC, WAIT_TOPIC, ADD_RESTAURANT_TOPIC, DELETE_RESTAURANT_TOPIC, EDIT_RESTAURANT_TOPIC } from './../services/pubsub.service'
 
 @Component({
     selector: 'restaurant-list',
@@ -247,7 +247,7 @@ export class RestaurantList {
             topic = EDIT_RESTAURANT_TOPIC;
         }
         if (type === 'DELETE') {
-            topic = DELETE_RESTAURANT_TOPIC;
+            topic = DELETE_COMMIT_TOPIC;
         }
         this.sub.getChannel().publish(topic, payload);
     }
