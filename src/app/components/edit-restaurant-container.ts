@@ -3,7 +3,7 @@ import { Restaurant } from './../model/restaurant.interface';
 import { RestaurantService } from './../services/restaurant.service';
 import PubSubService, { PubSubSystem } from './../services/pubsub.service';
 import { FormControl, FormGroup, Validators, FormBuilder } from '@angular/forms';
-import { CRUD_WILDCARD_TOPIC, WAIT_TOPIC } from './../services/pubsub.service'
+import { CRUD_WILDCARD_TOPIC, WAIT_TOPIC ,ADD_COMMIT_TOPIC,SAVE_COMMIT_TOPIC} from './../services/pubsub.service'
 
 
 
@@ -89,7 +89,7 @@ export class EditRestaurantContainer {
     private backUp: Restaurant = null;
     private actionState: string = null;
     private editForm: FormGroup;
-    private crudSubscription: ISubscriptionDefinition;
+    private crudRequestSubscription: ISubscriptionDefinition;
 
 
     constructor(private restaurantService: RestaurantService,
@@ -110,13 +110,8 @@ export class EditRestaurantContainer {
         })
 
 
-
-
-        //var channel = this.sub.getChannel();
-
-        //looking for add.update.* or edit.update.*
-        //this.subscription = channel.observe("*.update." + this.sub.getRestaurantEditTopic());
-        this.crudSubscription = this.sub.getChannel().subscribe(CRUD_WILDCARD_TOPIC,
+ 
+        this.crudRequestSubscription = this.sub.getChannel().subscribe(CRUD_WILDCARD_TOPIC,
             (data: any, envelope: IEnvelope) => this.handleCrudOperation(data, envelope));
 
         
@@ -142,9 +137,9 @@ export class EditRestaurantContainer {
 
 
     ngOnDestroy() {
-        if (this.crudSubscription) {
-            this.crudSubscription.unsubscribe();
-            this.crudSubscription = null;
+        if (this.crudRequestSubscription) {
+            this.crudRequestSubscription.unsubscribe();
+            this.crudRequestSubscription = null;
         }
     }
 
@@ -185,10 +180,12 @@ export class EditRestaurantContainer {
             this.editForm.reset();
             this.editForm.setValue(this.backUp);
             if (this.actionState == "ADD") {
-                // this.newSubject.next(dataToSend)
+                 
+                this.sub.getChannel().publish(ADD_COMMIT_TOPIC,dataToSend);
             }
             else {
-                //this.saveSubject.next(dataToSend);
+                
+                this.sub.getChannel().publish(SAVE_COMMIT_TOPIC,dataToSend);
             }
 
         }

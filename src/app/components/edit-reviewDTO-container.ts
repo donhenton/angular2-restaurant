@@ -1,7 +1,8 @@
 import { Component } from '@angular/core';
 import * as postal from "postal";
 import { FormControl, FormGroup, Validators, FormBuilder } from '@angular/forms';
-
+import PubSubService, { PubSubSystem } from './../services/pubsub.service';
+import { CRUD_WILDCARD_TOPIC } from './../services/pubsub.service'
 
 
 
@@ -19,35 +20,41 @@ import { FormControl, FormGroup, Validators, FormBuilder } from '@angular/forms'
 export class EditReviewDTOContainer {
 
      
+     private subscriptions: ISubscriptionDefinition[] = [];
+     private sub: PubSubSystem;
 
-
-    constructor(fb: FormBuilder) {
-        console.log("in restaurant con")
+    constructor(fb: FormBuilder,private subProvider: PubSubService) {
+        console.log("in DTO con")
+        this.sub = subProvider.getService();
+        let s1 = this.sub.getChannel().subscribe(CRUD_WILDCARD_TOPIC,
+            (data: any, envelope: IEnvelope) => this.handleCrudOperation(data, envelope));
+            
+        this.subscriptions.push(s1);
 
     }
 
 
-    ngOnInit() {
-        console.log("init")
-        //  let s1:ISubscriptionDefinition = postal.subscribe(
+    handleCrudOperation(data:any,envelope:IEnvelope)
+    {
+        console.log("DTO saw "+envelope.topic);
+    }
 
-        //   {channel:"test",
-        //     topic: "test-topic",
-        //     callback: function(data,envelope)
-        //     {
-        //       console.log("got data "+JSON.stringify(envelope));
-        //     }
+     ngOnDestroy() {
 
-
-        //   }
-
-
-        //  )
-        let cc: IChannelDefinition = postal.channel('test-channel');
-        let s1: ISubscriptionDefinition = cc.subscribe("*.test-topic", (data, envelope) => {
-             console.log("got data in DTO "+JSON.stringify(envelope));
+        this.subscriptions.forEach(s => {
+            if (s) {
+                
+                s.unsubscribe();
+                s = null;
+            }
         })
 
+    }
+
+    ngOnInit() {
+        console.log("init")
+        
+        
     }
 
 
