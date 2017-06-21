@@ -6,11 +6,11 @@ export interface Restaurant
   state: string,
   version: number 
   id: number,
-  reviewDTOs: ReviewDTOs[]
+  reviewDTOs: ReviewDTO[]
 }
 
 
-export interface ReviewDTOs
+export interface ReviewDTO
 {
     starRating: number,
     reviewListing: string,

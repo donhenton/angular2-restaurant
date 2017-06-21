@@ -1,0 +1,93 @@
+                 
+            <section class="editReviewContainer">
+            <span class="editHeader">Reviews</span>
+            <button class="editButton addButton">Add Review</button>
+    
+    
+    
+            <div id="reviewTableHeaderContainer">
+               <table>
+                <tbody>
+                <tr><th class="rating">Stars</th><th class="listing">Review</th><th class="actionButton">&nbsp;</th><th class="actionButton">&nbsp;</th></tr>
+                </tbody>
+                </table> 
+            </div>
+    
+    
+    
+              
+              <div id="reviewTableBodyContainer">
+              <table>
+              <tbody>
+              {
+                   
+           
+                   me.state.currentReviews.map((review,i) => (
+
+                                       <tr class={me.highLightEditRow.bind(me)(i)} key={review.id}>
+                                       <td class="rating">
+                                       <span class={me.showReviewControls(i,false )}>{review.starRating}</span>
+                                       <span class={me.showReviewControls(i,true)}>
+                                       
+                                        <select id="starRating" name="starRating" onChange={me.processField.bind(this,"starRating")} value={review.starRating}>
+                                            <option value="1">1</option>
+                                            <option value="2">2</option>
+                                            <option value="3">3</option>
+                                            <option value="4">4</option>
+                                            <option value="5">5</option>
+                                            <option value="6">6</option>
+                                            <option value="7">7</option>
+                                            <option value="8">8</option>
+                                            <option value="9">9</option>
+                                            <option value="10">10</option>
+                                            <option value="11">11</option>
+                                            <option value="12">12</option>
+                                            <option value="13">13</option>
+                                            <option value="14">14</option>
+                                    
+                                        </select>
+                        
+                                       </span>
+                               
+                                        &nbsp;<i class="fa fa-star-o" aria-hidden="true"></i>
+                               
+                               
+                                       </td> 
+                                       <td class="listing">
+                                       <span class={me.showReviewControls(i,false )}>{review.reviewListing}</span>
+                                       <span class={me.showReviewControls(i,true)}>
+                                       
+                                        <input onChange={me.processField.bind(this,"reviewListing")}  name="reviewListing" id="reviewListing" type="text" value={review.reviewListing} /> 
+                        
+                                       </span>
+                        
+                                       </td> 
+                                       <td class="actionButton">
+                                            <span class={me.showReviewControls(i,false )}>
+                                                <button onClick={me.editReview.bind(me,i)} class='btnEdit'>Edit</button> 
+                                            </span>
+                                            <span class={me.showReviewControls(i,true )}>
+                                                <button onClick={me.saveReview.bind(me,i)} class='btnEdit'>Save</button> 
+                                            </span>
+                               
+                                       </td> 
+                                       <td class="actionButton">
+                                                 
+                                            <span onClick={me.deleteReview.bind(me,i)} class={me.showReviewControls(i,false )}>
+                                                <button class='btnDelete'>Delete</button> 
+                                            </span>
+                                            <span onClick={me.cancelEdit.bind(me,i)} class={me.showReviewControls(i,true )}>
+                                                <button class='btnDelete'>Cancel</button> 
+                                            </span>
+                                       </td> 
+                               
+                                       </tr>
+                                    )) 
+           
+                    
+                         
+              }
+              </tbody>
+              </table>
+              </div>
+            </section>
