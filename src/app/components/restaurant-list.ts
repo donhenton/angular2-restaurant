@@ -75,41 +75,6 @@ export class RestaurantList {
         this.subscriptions.push(this.crudSubscription);
         this.subscriptions.push(this.refreshSubscription);
 
-        /*
-        this.deleteSubject
-            = channel.subject("delete." + this.sub.getRestaurantEditTopic());
-        this.editSubject
-            = channel.subject("edit.update." + this.sub.getRestaurantEditTopic());
-        this.addSubject
-            = channel.subject("add.update." + this.sub.getRestaurantEditTopic());
-         this.junkSubject
-            = channel.subject("junk."+ this.sub.getRestaurantEditTopic());
-        this.waitSubject
-            = channel.subject(this.sub.getWaitTopic());
-
-        this.refreshSubscription = channel.observe(this.sub.getRefreshTopic());
-
-        this.refreshSubscription
-            .subscribe(
-            (data: RefreshMessage) => {
-                console.log('got refresh message')
-                if (data.selectedRestaurantId)
-                {
-                    //if this is an add, roll
-                    this.selectedRowId = data.selectedRestaurantId;
-                    
-        
-                }
-                this.ngOnInit();
-
-            },
-            (error) => {
-                console.log(JSON.stringify(error))
-            }
-
-            );
-*/
-
 
     }
 

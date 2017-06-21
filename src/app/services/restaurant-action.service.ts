@@ -3,7 +3,7 @@ import { RestaurantService } from './restaurant.service';
 import { WaitRequest, Restaurant, messageType, RefreshMessage } from './../model/restaurant.interface';
 import { Injectable } from '@angular/core';
 import FeedbackMessageImpl from './../model/FeedbackMessageImpl';
-import { FEEDBACK_TOPIC, REFRESH_TOPIC, EDIT_RESTAURANT_TOPIC,COMMIT_WILDCARD_TOPIC, WAIT_TOPIC, 
+import { DELETE_RESTAURANT_TOPIC,FEEDBACK_TOPIC, REFRESH_TOPIC, EDIT_RESTAURANT_TOPIC,COMMIT_WILDCARD_TOPIC, WAIT_TOPIC, 
     ADD_COMMIT_TOPIC, DELETE_COMMIT_TOPIC, SAVE_COMMIT_TOPIC } from './../services/pubsub.service'
 
 
@@ -69,6 +69,7 @@ export class RestaurantActionService {
                 f.type = messageType.info;
                 this.sendFeedback(f);
                 this.sendRefresh({ doRefresh: true, selectedRestaurantId: null });
+                this.sub.getChannel().publish(DELETE_RESTAURANT_TOPIC, {});
 
 
             },
