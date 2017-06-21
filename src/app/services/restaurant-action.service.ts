@@ -21,7 +21,7 @@ export class RestaurantActionService {
         this.sub.getChannel().subscribe(COMMIT_WILDCARD_TOPIC, (data, envelope: IEnvelope) => {
 
             let action = envelope.topic.split(".")[0];
-            console.log(`got action ${action} in restaurant-action-service`)
+           // console.log(`got action ${action} in restaurant-action-service`)
             if (action === "ADD") {
                 this.handleAdd(data);
             }
@@ -91,7 +91,6 @@ export class RestaurantActionService {
                 this.sendRefresh({ doRefresh: true, selectedRestaurantId: idInfo.id })
                 let newItem: Restaurant = { ...data };
                 newItem.id = idInfo.id;
-                // this.editSubject.next({ selectedRestaurant: newItem });
                 this.sub.getChannel().publish(EDIT_RESTAURANT_TOPIC,{ selectedRestaurant: newItem })
 
             },
@@ -103,7 +102,6 @@ export class RestaurantActionService {
 
     handleSave(data) {
 
-        console.log("in save " + JSON.stringify(data, null, " "))
         let f = new FeedbackMessageImpl();
         f.message = "Save completed";
         f.show = true;
