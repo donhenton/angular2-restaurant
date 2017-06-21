@@ -3,8 +3,8 @@ import { RestaurantService } from './restaurant.service';
 import { WaitRequest, Restaurant, messageType, RefreshMessage } from './../model/restaurant.interface';
 import { Injectable } from '@angular/core';
 import FeedbackMessageImpl from './../model/FeedbackMessageImpl';
-import { DELETE_RESTAURANT_TOPIC,FEEDBACK_TOPIC, REFRESH_TOPIC, EDIT_RESTAURANT_TOPIC,COMMIT_WILDCARD_TOPIC, WAIT_TOPIC, 
-    ADD_COMMIT_TOPIC, DELETE_COMMIT_TOPIC, SAVE_COMMIT_TOPIC } from './../services/pubsub.service'
+import { DELETE_RESTAURANT_TOPIC,FEEDBACK_TOPIC, REFRESH_TOPIC, EDIT_RESTAURANT_TOPIC,COMMIT_RESTAURANT_WILDCARD_TOPIC, WAIT_TOPIC, 
+    ADD_RESTAURANT_COMMIT_TOPIC, DELETE_RESTAURANT_COMMIT_TOPIC, SAVE_RESTAURANT_COMMIT_TOPIC } from './../services/pubsub.service'
 
 
 @Injectable()
@@ -18,7 +18,7 @@ export class RestaurantActionService {
 
         this.sub = subProvider.getService();
        
-        this.sub.getChannel().subscribe(COMMIT_WILDCARD_TOPIC, (data, envelope: IEnvelope) => {
+        this.sub.getChannel().subscribe(COMMIT_RESTAURANT_WILDCARD_TOPIC, (data, envelope: IEnvelope) => {
 
             let action = envelope.topic.split(".")[0];
            // console.log(`got action ${action} in restaurant-action-service`)

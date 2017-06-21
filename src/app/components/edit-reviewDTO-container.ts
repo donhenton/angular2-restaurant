@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import * as postal from "postal";
 import { FormControl, FormGroup, Validators, FormBuilder } from '@angular/forms';
 import PubSubService, { PubSubSystem } from './../services/pubsub.service';
-import { CRUD_WILDCARD_TOPIC } from './../services/pubsub.service'
+import { CRUD_RESTAURANT_WILDCARD_TOPIC } from './../services/pubsub.service'
 
 
 
@@ -26,7 +26,7 @@ export class EditReviewDTOContainer {
     constructor(fb: FormBuilder,private subProvider: PubSubService) {
        // console.log("in DTO con")
         this.sub = subProvider.getService();
-        let s1 = this.sub.getChannel().subscribe(CRUD_WILDCARD_TOPIC,
+        let s1 = this.sub.getChannel().subscribe(CRUD_RESTAURANT_WILDCARD_TOPIC,
             (data: any, envelope: IEnvelope) => this.handleCrudOperation(data, envelope));
             
         this.subscriptions.push(s1);

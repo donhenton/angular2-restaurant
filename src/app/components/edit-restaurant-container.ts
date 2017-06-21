@@ -3,7 +3,7 @@ import { Restaurant } from './../model/restaurant.interface';
 import { RestaurantService } from './../services/restaurant.service';
 import PubSubService, { PubSubSystem } from './../services/pubsub.service';
 import { FormControl, FormGroup, Validators, FormBuilder } from '@angular/forms';
-import { CRUD_WILDCARD_TOPIC, WAIT_TOPIC ,ADD_COMMIT_TOPIC,SAVE_COMMIT_TOPIC} from './../services/pubsub.service'
+import { CRUD_RESTAURANT_WILDCARD_TOPIC, WAIT_TOPIC ,ADD_RESTAURANT_COMMIT_TOPIC,SAVE_RESTAURANT_COMMIT_TOPIC} from './../services/pubsub.service'
 
 
 
@@ -111,7 +111,7 @@ export class EditRestaurantContainer {
 
 
  
-        this.crudRequestSubscription = this.sub.getChannel().subscribe(CRUD_WILDCARD_TOPIC,
+        this.crudRequestSubscription = this.sub.getChannel().subscribe(CRUD_RESTAURANT_WILDCARD_TOPIC,
             (data: any, envelope: IEnvelope) => this.handleCrudOperation(data, envelope));
 
         
@@ -181,11 +181,11 @@ export class EditRestaurantContainer {
             this.editForm.setValue(this.backUp);
             if (this.actionState == "ADD") {
                  
-                this.sub.getChannel().publish(ADD_COMMIT_TOPIC,dataToSend);
+                this.sub.getChannel().publish(ADD_RESTAURANT_COMMIT_TOPIC,dataToSend);
             }
             else {
                 
-                this.sub.getChannel().publish(SAVE_COMMIT_TOPIC,dataToSend);
+                this.sub.getChannel().publish(SAVE_RESTAURANT_COMMIT_TOPIC,dataToSend);
             }
 
         }
