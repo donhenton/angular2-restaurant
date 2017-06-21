@@ -24,7 +24,7 @@ export class EditReviewDTOContainer {
      private sub: PubSubSystem;
 
     constructor(fb: FormBuilder,private subProvider: PubSubService) {
-        console.log("in DTO con")
+       // console.log("in DTO con")
         this.sub = subProvider.getService();
         let s1 = this.sub.getChannel().subscribe(CRUD_WILDCARD_TOPIC,
             (data: any, envelope: IEnvelope) => this.handleCrudOperation(data, envelope));

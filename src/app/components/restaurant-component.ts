@@ -1,14 +1,14 @@
 import { Component } from '@angular/core';
 import { RestaurantList } from './restaurant-list'
 import { EditRestaurantContainer } from './edit-restaurant-container'
-import {EditReviewDTOContainer} from './edit-reviewDTO-container'
+import { EditReviewDTOContainer } from './edit-reviewDTO-container'
 import { RestaurantActionService } from './../services/restaurant-action.service';
 import { WaitIndicator } from './wait-indicator';
-import PubSubService,{PubSubSystem} from './../services/pubsub.service';
+import PubSubService, { PubSubSystem } from './../services/pubsub.service';
 import { Subject } from "rxjs/Subject";
-import {FeedbackMessage} from './../model/restaurant.interface';
+import { FeedbackMessage } from './../model/restaurant.interface';
 import * as postal from 'postal';
-import {ADD_RESTAURANT_TOPIC} from './../services/pubsub.service'
+import { FEEDBACK_TOPIC } from './../services/pubsub.service'
 
 @Component({
   selector: 'restaurant-component',
@@ -58,25 +58,38 @@ import {ADD_RESTAURANT_TOPIC} from './../services/pubsub.service'
   
   `
 })
-export class RestaurantComponent    {
+export class RestaurantComponent {
 
   private displayMessage: string;
   private sub: PubSubSystem;
+  private subscriptions: ISubscriptionDefinition[] = [];
 
-  constructor( private subProvider: PubSubService,private actionProvider: RestaurantActionService) {
- 
-    this.displayMessage = "get a job, bozo";
-     this.sub = subProvider.getService();
-     
+  constructor(private subProvider: PubSubService, private actionProvider: RestaurantActionService) {
+
+    this.displayMessage = "";
+    this.sub = subProvider.getService();
+    let s1 = this.sub.getChannel().subscribe(FEEDBACK_TOPIC,
+      (data: any, envelope: IEnvelope) => this.handleFeedback(data, envelope));
+
   }
 
-  ngOnInit()
+  ngOnInit() {
+
+
+
+  }
+
+
+  handleFeedback(data:FeedbackMessage,evelope:IEnvelope)
   {
- 
-      
-      
+      if (data.show)
+    {
+      this.displayMessage = data.message;
+    }
+    else
+    {
+      this.displayMessage = "";
+    }
   }
-
-  
 
 }

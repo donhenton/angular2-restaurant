@@ -94,7 +94,7 @@ export class EditRestaurantContainer {
 
     constructor(private restaurantService: RestaurantService,
         private subProvider: PubSubService, fb: FormBuilder) {
-        console.log("in restaurant con")
+      //  console.log("in restaurant con")
         this.sub = subProvider.getService();
         this.editForm = fb.group({
             city: ['', Validators.compose([Validators.required, Validators.minLength(3)])],
