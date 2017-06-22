@@ -101,7 +101,7 @@ export class EditReviewDTOContainer {
     handleCrudOperation(data: Restaurant, envelope: IEnvelope) {
 
         let action = envelope.topic.split('.')[0];
-        console.log("receiving crud " + JSON.stringify(envelope))
+        //console.log("receiving crud " + JSON.stringify(envelope))
         if (action === "EDIT") {
             // console.log("data " + JSON.stringify(data.reviewDTOs))
 
@@ -160,13 +160,8 @@ export class EditReviewDTOContainer {
                 payload.restaurantId = this.backUp.id;
                 payload.reviewDTO = ev.selectedReview;
                 this.sub.getChannel().publish(ADD_REVIEW_COMMIT_TOPIC, payload);
+                return;
         }
-
-
-        if (this.reviewBackup && this.reviewBackup.id !== ev.selectedReview.id) {
-            return;
-        } //events from buttons not on the current review are ignored
-
 
         if (ev.type == "DELETE") {
             let sure = window.confirm("Are you sure you want to delete the current review?");
@@ -179,9 +174,15 @@ export class EditReviewDTOContainer {
             return;
         }
 
+        if (this.reviewBackup && this.reviewBackup.id !== ev.selectedReview.id) {
+            return;
+        } //events from buttons not on the current review are ignored
 
 
-        console.log("review container " + JSON.stringify(ev));
+  
+
+
+        //console.log("review container " + JSON.stringify(ev));
         this.reviewBackup = { ...ev.selectedReview };
 
         if (ev.type == "CANCEL") {

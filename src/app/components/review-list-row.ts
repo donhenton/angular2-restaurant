@@ -101,6 +101,10 @@ export class ReviewListRow {
 
             this.editChange.emit({ "type": type, "selectedReview": this.review, idx: this.idx });
         }
+        if (type === "DELETE") {
+
+            this.editChange.emit({ "type": type, "selectedReview": this.review, idx: this.idx });
+        }
         if (type == "EDIT") {
 
 
