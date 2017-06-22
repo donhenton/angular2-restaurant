@@ -1,6 +1,8 @@
 import { Restaurant, ReviewDTO } from './../model/restaurant.interface';
 import { Component, Input, EventEmitter, Output, ElementRef, Inject } from '@angular/core';
 import { FormControl, FormGroup, Validators, FormBuilder } from '@angular/forms';
+import 'rxjs/Rx';
+import { InputValidators } from './../validators/input-validators';
 
 @Component({
     selector: 'review-list-row',
@@ -37,7 +39,7 @@ import { FormControl, FormGroup, Validators, FormBuilder } from '@angular/forms'
                     <td class="actionButton">
                          
                             <button *ngIf="!matchCurrent()"  (click)="onClick($event,'EDIT')" class='btnEdit'>Edit</button>    
-                            <button *ngIf="matchCurrent()" (click)="onClick($event,'SAVE')" class='btnEdit'>Save</button> 
+                            <button *ngIf="matchCurrent()"  [ngClass]="{inactive:this.reviewForm.invalid}"     (click)="onClick($event,'SAVE')" class='btnEdit'>Save</button> 
                        
                     </td> 
                     
@@ -61,15 +63,25 @@ export class ReviewListRow {
     @Output('edit-event') editChange = new EventEmitter();
     private domNode: HTMLElement = null;
     private reviewForm: FormGroup;
-
+    private sentInvalid:boolean = false;
     constructor( @Inject(ElementRef) elementRef: ElementRef, fb: FormBuilder) {
         this.domNode = elementRef.nativeElement;
         this.reviewForm = fb.group({
-            reviewListing: ['', Validators.required],
+            reviewListing: ['', Validators.compose([
+                Validators.required,
+                InputValidators.cannotBeEmpty
+
+            ])],
             stampDate: [new Date()],
             id: [-1],
-            starRating: ['', Validators.required]
+            starRating: [1, Validators.required]
         })
+
+
+
+
+
+
 
     }
     ngAfterViewInit() {
@@ -79,6 +91,25 @@ export class ReviewListRow {
 
     ngOnInit() {
         this.reviewForm.setValue(this.review);
+        this.reviewForm.controls.reviewListing.valueChanges
+            .debounceTime(200)
+            .subscribe(this.onListingChange.bind(this));
+    }
+
+    onListingChange(ev) {
+        if (this.reviewForm.invalid && !this.sentInvalid)
+        {
+            //formObject.controls.username.errors
+            let message = "Review Listing "+this.reviewForm.controls['reviewListing'].errors.message;
+            this.editChange.emit({ "type": "FORM_VALIDATION", "selectedReview": this.review, idx: this.idx, invalid: this.reviewForm.invalid, message: message });
+            this.sentInvalid = true;
+        }
+        if (!this.reviewForm.invalid && this.sentInvalid)
+        {
+            this.sentInvalid = false;
+            this.editChange.emit({ "type": "FORM_VALIDATION", "selectedReview": this.review, idx: this.idx, invalid: this.reviewForm.invalid, message:"" });
+        }
+         
     }
 
     matchCurrent(): boolean {

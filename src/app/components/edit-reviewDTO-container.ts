@@ -17,6 +17,7 @@ import { ReviewListRow } from './review-list-row';
      
      <section [hidden]="backUp === null" class="editReviewContainer">
             <span class="editHeader">Reviews</span>
+            <span class=review-validation-message>{{validationMessage}}</span>
             <button (click)="addReview()" class="editButton addButton">Add Review</button>
     
     
@@ -152,6 +153,21 @@ export class EditReviewDTOContainer {
 
 
     onEditChangeEvent(ev) {
+
+        if (ev.type == "FORM_VALIDATION")
+        {
+
+            console.log(`validation message ${ev.invalid} ${ev.message}`)
+            if (ev.invalid)
+            {
+                this.validationMessage = ev.message;
+            }
+            else
+            {
+                this.validationMessage = "";
+            }
+
+        }
 
 
         if (ev.type == "ADD")

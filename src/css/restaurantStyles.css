@@ -137,6 +137,18 @@
       width: 20%; }
     .restaurantApp .editReviewContainer th.actionButton {
       width: 10%; }
+
+      .restaurantApp .editReviewContainer .review-validation-message {
+
+        margin-left: 20px;
+        margin-top: 10px;
+        display: inline-block;
+        color: red;
+        font-style: italic
+        
+      }
+
+
     .restaurantApp .editReviewContainer td {
       padding: 5px;
       border: thin solid #08c;
@@ -188,7 +200,7 @@
       width: 175px; }
     .restaurantApp .editRestaurantContainer input.age {
       width: 100px; }
-     .restaurantApp .editRestaurantContainer .inactive {
+     .restaurantApp  .inactive {
        opacity: .4;
        cursor: default;
        pointer-events: none;

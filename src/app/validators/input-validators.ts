@@ -5,11 +5,11 @@ export class InputValidators {
     {
         if (!control.value)
         {
-            return {isEmpty: true}
+            return {isEmpty: true,message: "Cannot be empty"}
         }
-        if (control.value && control.value.length == 0 )
+        if (control.value && control.value.trim().length == 0 )
         {
-            return {isEmpty: true}
+            return {isEmpty: true,message: "Cannot be empty"}
         }
         return null; //return null if you are valid
 
