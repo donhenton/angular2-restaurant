@@ -23,11 +23,9 @@ import { ReviewListRow } from './review-list-row';
     
     
             <div id="reviewTableHeaderContainer">
-               <table>
-                <tbody>
-                <tr><th class="rating">Stars</th><th class="listing">Review</th><th class="actionButton">&nbsp;</th><th class="actionButton">&nbsp;</th></tr>
-                </tbody>
-                </table> 
+                
+                 <span class="header rating">Stars</span><span class="header listing">Review</span><span class="header actionArea">&nbsp;</span>
+                 
             </div>
     
     

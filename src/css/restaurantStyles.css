@@ -102,18 +102,14 @@
       border-collapse: collapse;
       table-layout: fixed;
       empty-cells: show; }
-    .restaurantApp .editReviewContainer th {
-      background-color: #08c;
-      color: white;
-      border-right: thin solid white;
-      padding-bottom: 0px;
-      text-align: center; }
+   
     .restaurantApp .editReviewContainer #reviewTableBodyContainer {
       height: 110px;
       overflow-y: scroll;
       width: 570px; }
     .restaurantApp .editReviewContainer #reviewTableHeaderContainer {
-      width: 555px; }
+      clear:both;
+       }
     .restaurantApp .editReviewContainer .highlighted, .restaurantApp .editReviewContainer .highlighted select, .restaurantApp .editReviewContainer .highlighted input {
       background-color: lightblue;
       color: white; }
@@ -131,12 +127,36 @@
       font-size: 15px;
       border-radius: 20px;
       height: 25px; }
-    .restaurantApp .editReviewContainer th.listing {
-      width: 70%; }
-    .restaurantApp .editReviewContainer th.rating {
-      width: 20%; }
-    .restaurantApp .editReviewContainer th.actionButton {
-      width: 10%; }
+
+       .restaurantApp .editReviewContainer .header {
+      background-color: #08c;
+      color: white;
+      border-right: 2px solid white;
+      display: inline-table;
+      
+      padding-top: 5px;
+      padding-bottom:5px;
+      text-align: center; }
+
+     
+      .restaurantApp .editReviewContainer .header.rating {
+      width: 100px; }
+      .restaurantApp .editReviewContainer .header.listing {
+      width: 350px; }
+      .restaurantApp .editReviewContainer .header.actionArea {
+      width: 100px; }
+
+
+
+      .restaurantApp .editReviewContainer td.listing {
+        width: 350px; }
+      .restaurantApp .editReviewContainer td.rating {
+        width: 100px; }
+      .restaurantApp .editReviewContainer td.actionButton {
+        width: 50px;
+        text-align: center; }
+
+
 
       .restaurantApp .editReviewContainer .review-validation-message {
 
@@ -154,13 +174,7 @@
       border: thin solid #08c;
       vertical-align: center;
       height: 30px; }
-      .restaurantApp .editReviewContainer td.listing {
-        width: 70%; }
-      .restaurantApp .editReviewContainer td.rating {
-        width: 20%; }
-      .restaurantApp .editReviewContainer td.actionButton {
-        width: 10%;
-        text-align: center; }
+      
     .restaurantApp .editReviewContainer .btnEdit {
       font-family: Arial;
       color: #ffffff;
