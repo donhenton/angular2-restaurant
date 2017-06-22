@@ -2,7 +2,10 @@ import { Component } from '@angular/core';
 import * as postal from "postal";
 import { FormControl, FormGroup, Validators, FormBuilder } from '@angular/forms';
 import PubSubService, { PubSubSystem } from './../services/pubsub.service';
-import { SAVE_REVIEW_COMMIT_TOPIC, EDIT_RESTAURANT_TOPIC, WAIT_TOPIC, REFRESH_REVIEW_TOPIC, CRUD_RESTAURANT_WILDCARD_TOPIC } from './../services/pubsub.service'
+import {
+    SAVE_REVIEW_COMMIT_TOPIC, EDIT_RESTAURANT_TOPIC, WAIT_TOPIC,   ADD_REVIEW_COMMIT_TOPIC,
+    REFRESH_REVIEW_TOPIC, CRUD_RESTAURANT_WILDCARD_TOPIC, DELETE_REVIEW_COMMIT_TOPIC
+} from './../services/pubsub.service'
 import { WaitRequest, Restaurant, ReviewDTO, ReviewPayload } from "../model/restaurant.interface";
 import { ReviewListRow } from './review-list-row';
 
@@ -14,7 +17,7 @@ import { ReviewListRow } from './review-list-row';
      
      <section [hidden]="backUp === null" class="editReviewContainer">
             <span class="editHeader">Reviews</span>
-            <button class="editButton addButton">Add Review</button>
+            <button (click)="addReview()" class="editButton addButton">Add Review</button>
     
     
     
@@ -74,11 +77,11 @@ export class EditReviewDTOContainer {
         this.sub.getChannel().publish(WAIT_TOPIC, waitMessage);
     }
 
-    handleRefresh(data:Restaurant, envelope: IEnvelope) {
-         this.backUp = { ...data  };
-         this.reviewList = this.backUp.reviewDTOs;
-         this.reviewBackup = null;
-         this.sendWait(false);
+    handleRefresh(data: Restaurant, envelope: IEnvelope) {
+        this.backUp = { ...data };
+        this.reviewList = this.backUp.reviewDTOs;
+        this.reviewBackup = null;
+        this.sendWait(false);
     }
 
     dimThisRow(currentReview) {
@@ -134,18 +137,44 @@ export class EditReviewDTOContainer {
 
     }
 
+    addReview() {
+
+        let newReview = <ReviewDTO>{};
+        newReview.id = -1;
+        newReview.reviewListing = "add your review";
+        newReview.stampDate = null;
+        newReview.starRating = 1;
+        this.reviewList = [newReview].concat(this.reviewList);
+        this.reviewBackup = this.reviewList[0];
+        return;
+
+    }
+
 
     onEditChangeEvent(ev) {
 
+
+        if (ev.type == "ADD")
+        {
+                let payload: ReviewPayload = <ReviewPayload>{};
+                payload.restaurantId = this.backUp.id;
+                payload.reviewDTO = ev.selectedReview;
+                this.sub.getChannel().publish(ADD_REVIEW_COMMIT_TOPIC, payload);
+        }
+
+
         if (this.reviewBackup && this.reviewBackup.id !== ev.selectedReview.id) {
             return;
-        } //end if review matches current review
+        } //events from buttons not on the current review are ignored
 
 
         if (ev.type == "DELETE") {
             let sure = window.confirm("Are you sure you want to delete the current review?");
             if (sure) {
-
+                let payload: ReviewPayload = <ReviewPayload>{};
+                payload.restaurantId = this.backUp.id;
+                payload.reviewDTO = ev.selectedReview;
+                this.sub.getChannel().publish(DELETE_REVIEW_COMMIT_TOPIC, payload);
             }
             return;
         }

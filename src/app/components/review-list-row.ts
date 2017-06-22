@@ -1,10 +1,10 @@
 import { Restaurant, ReviewDTO } from './../model/restaurant.interface';
-import { Component, Input, EventEmitter, Output,ElementRef ,Inject } from '@angular/core';
-import { FormControl, FormGroup, Validators,FormBuilder } from '@angular/forms';
+import { Component, Input, EventEmitter, Output, ElementRef, Inject } from '@angular/core';
+import { FormControl, FormGroup, Validators, FormBuilder } from '@angular/forms';
 
 @Component({
-  selector: 'review-list-row',
-  template: `
+    selector: 'review-list-row',
+    template: `
                     <form [formGroup]="reviewForm">
                     
                     <td class="rating">
@@ -50,72 +50,73 @@ import { FormControl, FormGroup, Validators,FormBuilder } from '@angular/forms';
                     </form>
   `
 })
-export class ReviewListRow { 
+export class ReviewListRow {
 
 
 
-    @Input() review:ReviewDTO;
-    @Input() idx:number;
-    @Input() currentReview:ReviewDTO; //selected by the container if none, then this is null;
+    @Input() review: ReviewDTO;
+    @Input() idx: number;
+    @Input() currentReview: ReviewDTO; //selected by the container if none, then this is null;
 
     @Output('edit-event') editChange = new EventEmitter();
     private domNode: HTMLElement = null;
     private reviewForm: FormGroup;
 
-    constructor(@Inject(ElementRef) elementRef: ElementRef,fb: FormBuilder)
-    {
-       this.domNode = elementRef.nativeElement;
-       this.reviewForm = fb.group({
-        reviewListing: ['', Validators.required],
-        stampDate:[new Date()],
-        id:[-1],
-        starRating: ['',Validators.required]
-      })
+    constructor( @Inject(ElementRef) elementRef: ElementRef, fb: FormBuilder) {
+        this.domNode = elementRef.nativeElement;
+        this.reviewForm = fb.group({
+            reviewListing: ['', Validators.required],
+            stampDate: [new Date()],
+            id: [-1],
+            starRating: ['', Validators.required]
+        })
 
     }
-    ngAfterViewInit()
-    {
-         //this.reportDom.emit({"dom": this.domNode});
-        
+    ngAfterViewInit() {
+        //this.reportDom.emit({"dom": this.domNode});
+
     }
 
-    matchCurrent():boolean
-    {
-        let hit:boolean = false;
-        if (this.currentReview && this.currentReview.id === this.review.id)
-        {
-           hit = true;
+    ngOnInit() {
+        this.reviewForm.setValue(this.review);
+    }
+
+    matchCurrent(): boolean {
+        let hit: boolean = false;
+        if (this.currentReview && this.currentReview.id === this.review.id) {
+            hit = true;
         }
 
         return hit;
     }
 
-    public getDom()
-    {
-      return this.domNode;
+    public getDom() {
+        return this.domNode;
     }
 
 
-     onClick(ev,type)
-    {
-          
-           if (type === "CANCEL")
-           {
-               this.reviewForm.setValue(this.review);
-               this.editChange.emit({"type": type,"selectedReview": this.review, idx: this.idx});
-           }
-           if (type == "EDIT")
-           {
-                
-               this.reviewForm.setValue(this.review);
-               this.editChange.emit({"type": type,"selectedReview": this.review, idx: this.idx});
-           }
-           if (type == "SAVE")
-           {
-               this.editChange.emit({"type": type,"selectedReview": this.reviewForm.value, idx: this.idx});
-           }
-          
+    onClick(ev, type) {
+
+        if (type === "CANCEL") {
+
+            this.editChange.emit({ "type": type, "selectedReview": this.review, idx: this.idx });
+        }
+        if (type == "EDIT") {
+
+
+            this.editChange.emit({ "type": type, "selectedReview": this.review, idx: this.idx });
+        }
+        if (type == "SAVE") {
+            if (this.review.id > -1) {
+                this.editChange.emit({ "type": type, "selectedReview": this.reviewForm.value, idx: this.idx });
+            }
+            else {
+                this.editChange.emit({ "type": "ADD", "selectedReview": this.reviewForm.value, idx: this.idx });
+            }
+
+        }
+
     }
 
- 
+
 }

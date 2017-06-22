@@ -169,10 +169,33 @@ export class RestaurantActionService {
 
 
     handleReviewAdd(data: ReviewPayload) {
+        this.sendWait(true);
+        this.restaurantService.addReview(data).subscribe(
+
+            () => {
+                 
+                this.sendReviewRefresh(data.restaurantId,"Review Added");
+
+            },
+            err => { console.log(JSON.stringify(err)) }
+
+        )
 
     }
 
     handleReviewDelete(data: ReviewPayload) {
+        this.sendWait(true);
+        this.restaurantService.deleteReview(data).subscribe(
+
+            () => {
+                 
+                this.sendReviewRefresh(data.restaurantId,"Review Deleted");
+
+            },
+            err => { console.log(JSON.stringify(err)) }
+
+        )
+
 
     }
 

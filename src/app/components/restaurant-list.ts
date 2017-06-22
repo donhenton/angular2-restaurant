@@ -6,7 +6,8 @@ import PubSubService, { PubSubSystem } from './../services/pubsub.service';
 import { WaitRequest, RefreshMessage } from './../model/restaurant.interface';
 import * as postal from 'postal';
 import { DELETE_RESTAURANT_COMMIT_TOPIC,REFRESH_RESTAURANT_TOPIC,CRUD_RESTAURANT_WILDCARD_TOPIC, WAIT_TOPIC, 
-    ADD_RESTAURANT_TOPIC, DELETE_RESTAURANT_TOPIC, EDIT_RESTAURANT_TOPIC } from './../services/pubsub.service'
+    ADD_RESTAURANT_TOPIC, DELETE_RESTAURANT_TOPIC, EDIT_RESTAURANT_TOPIC, REFRESH_REVIEW_TOPIC
+} from './../services/pubsub.service'
 
 @Component({
     selector: 'restaurant-list',
@@ -73,10 +74,30 @@ export class RestaurantList {
         this.refreshSubscription = this.sub.getChannel().subscribe(REFRESH_RESTAURANT_TOPIC,
             (data: any, envelope: IEnvelope) => this.handleRefresh(data, envelope));
 
+        let s1 = this.sub.getChannel().subscribe(REFRESH_REVIEW_TOPIC,
+            (data: any, envelope: IEnvelope) => this.handleReviewRefresh(data.selectedRestaurant, envelope));
+
         this.subscriptions.push(this.crudSubscription);
         this.subscriptions.push(this.refreshSubscription);
+        this.subscriptions.push(s1);
+
+    }
+
+    handleReviewRefresh(data:Restaurant, envelope:IEnvelope)
+    {
+         let t =      this.restaurantList.map( (res) => {
+            if (res.id == data.id)
+            {
+                console.log("refreshing reviews in list")
+                res = {...data};
+            }
+            return res;
+           
 
 
+        })   
+
+        this.restaurantList = <Restaurant[]>t;
     }
 
     handleCrudOperation(data: any, envelope: IEnvelope) {
