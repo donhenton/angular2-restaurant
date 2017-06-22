@@ -85,7 +85,7 @@ export class EditReviewDTOContainer {
     }
 
     dimThisRow(currentReview) {
-        if (this.reviewBackup) {
+        if (this.reviewBackup && currentReview) {
             if (this.reviewBackup.id === currentReview.id) {
                 return false;
             }
