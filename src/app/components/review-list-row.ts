@@ -11,7 +11,7 @@ import { InputValidators } from './../validators/input-validators';
                     
                     <td class="rating">
                             <input type="hidden" formControlName="stampDate">
-                            <span  *ngIf="!matchCurrent()">{{review.starRating}}</span><i class="fa fa-star-o" aria-hidden="true"></i>
+                            <span  *ngIf="!matchCurrent()">{{review.starRating}}</span>
                     
                             <select  *ngIf="matchCurrent()"  id="starRating" formControlName="starRating">
                                     <option value="1">1</option>
@@ -29,8 +29,8 @@ import { InputValidators } from './../validators/input-validators';
                                     <option value="13">13</option>
                                     <option value="14">14</option>
                                     
-                            </select>
-                     
+                            </select> 
+                     <i class="fa fa-star-o" aria-hidden="true"></i>
                     </td>
                     <td class="listing">
                         <span *ngIf="!matchCurrent()">{{review.reviewListing}}</span>
@@ -63,6 +63,7 @@ export class ReviewListRow {
     @Output('edit-event') editChange = new EventEmitter();
     private domNode: HTMLElement = null;
     private reviewForm: FormGroup;
+    private reviewBackup:ReviewDTO = null;
     private sentInvalid:boolean = false;
     constructor( @Inject(ElementRef) elementRef: ElementRef, fb: FormBuilder) {
         this.domNode = elementRef.nativeElement;
@@ -91,6 +92,7 @@ export class ReviewListRow {
 
     ngOnInit() {
         this.reviewForm.setValue(this.review);
+        this.reviewBackup = {...this.review};
         this.reviewForm.controls.reviewListing.valueChanges
             .debounceTime(200)
             .subscribe(this.onListingChange.bind(this));
@@ -129,7 +131,7 @@ export class ReviewListRow {
     onClick(ev, type) {
 
         if (type === "CANCEL") {
-
+            this.reviewForm.setValue(this.reviewBackup);
             this.editChange.emit({ "type": type, "selectedReview": this.review, idx: this.idx });
         }
         if (type === "DELETE") {

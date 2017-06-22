@@ -138,7 +138,13 @@
       padding-bottom:3px;
       text-align: center; }
 
-     
+     .restaurantApp .editReviewContainer i.fa
+     {
+       margin-left: 5px;
+     }
+
+
+
       .restaurantApp .editReviewContainer .header.rating {
       width: 100px; }
       .restaurantApp .editReviewContainer .header.listing {

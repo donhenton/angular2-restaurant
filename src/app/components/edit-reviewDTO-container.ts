@@ -82,6 +82,7 @@ export class EditReviewDTOContainer {
         this.reviewList = this.backUp.reviewDTOs;
         this.reviewBackup = null;
         this.sendWait(false);
+        this.validationMessage = "";
     }
 
     dimThisRow(currentReview) {
@@ -204,6 +205,7 @@ export class EditReviewDTOContainer {
             this.reviewBackup = null;
             let t: IEnvelope = <IEnvelope>{};
             t.topic = EDIT_RESTAURANT_TOPIC;
+            this.validationMessage = "";
             this.handleCrudOperation(this.backUp, t);
 
             return;
