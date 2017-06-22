@@ -55,6 +55,7 @@ export class EditReviewDTOContainer {
     private reviewList: ReviewDTO[];
     private backUp: Restaurant = null;
     private reviewBackup: ReviewDTO = null;
+    private validationMessage:string = "";
 
     constructor(fb: FormBuilder, private subProvider: PubSubService) {
         // console.log("in DTO con")
@@ -140,7 +141,7 @@ export class EditReviewDTOContainer {
 
         let newReview = <ReviewDTO>{};
         newReview.id = -1;
-        newReview.reviewListing = "add your review";
+        newReview.reviewListing = "";
         newReview.stampDate = null;
         newReview.starRating = 1;
         this.reviewList = [newReview].concat(this.reviewList);
@@ -155,7 +156,7 @@ export class EditReviewDTOContainer {
         if (ev.type == "FORM_VALIDATION")
         {
 
-            console.log(`validation message ${ev.invalid} ${ev.message}`)
+           // console.log(`validation message ${ev.invalid} ${ev.message}`)
             if (ev.invalid)
             {
                 this.validationMessage = ev.message;
