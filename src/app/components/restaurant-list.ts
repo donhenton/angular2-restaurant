@@ -80,7 +80,7 @@ export class RestaurantList {
     }
 
     handleCrudOperation(data: any, envelope: IEnvelope) {
-        console.log("in restaurant-list handleCrud " + envelope.topic + " not needed ");
+      //  console.log("in restaurant-list handleCrud " + envelope.topic + " not needed ");
     }
     handleRefresh(data: RefreshMessage, envelope: IEnvelope) {
         // console.log("in restaurant-list refresh " + JSON.stringify(envelope));

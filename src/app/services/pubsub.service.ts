@@ -18,6 +18,15 @@ export const ADD_RESTAURANT_COMMIT_TOPIC = 'ADD.commit.topic.'+ RESTAURANT_TOPIC
 export const SAVE_RESTAURANT_COMMIT_TOPIC = 'SAVE.commit.topic.'+ RESTAURANT_TOPIC;
 export const DELETE_RESTAURANT_COMMIT_TOPIC = 'DELETE.commit.topic.'+ RESTAURANT_TOPIC;
 
+export const REVIEW_TOPIC = "review-topic";
+export const COMMIT_REVIEW_WILDCARD_TOPIC = '*.commit.topic.'+ REVIEW_TOPIC;
+export const ADD_REVIEW_COMMIT_TOPIC = 'ADD.commit.topic.'+ REVIEW_TOPIC;
+export const SAVE_REVIEW_COMMIT_TOPIC = 'SAVE.commit.topic.'+ REVIEW_TOPIC;
+export const DELETE_REVIEW_COMMIT_TOPIC = 'DELETE.commit.topic.'+ REVIEW_TOPIC;
+
+
+
+
 export const FEEDBACK_TOPIC = 'feedback.topic';
 export const WAIT_TOPIC = "wait.topic";
 export const REFRESH_TOPIC = "refresh.topic."

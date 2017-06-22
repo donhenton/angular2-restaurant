@@ -1,24 +1,53 @@
 import { Restaurant, ReviewDTO } from './../model/restaurant.interface';
 import { Component, Input, EventEmitter, Output,ElementRef ,Inject } from '@angular/core';
-
+import { FormControl, FormGroup, Validators,FormBuilder } from '@angular/forms';
 
 @Component({
   selector: 'review-list-row',
   template: `
+                    <form [formGroup]="reviewForm">
+                    
+                    <td class="rating">
+                            <input type="hidden" formControlName="stampDate">
+                            <span  *ngIf="!matchCurrent()">{{review.starRating}}</span><i class="fa fa-star-o" aria-hidden="true"></i>
+                    
+                            <select  *ngIf="matchCurrent()"  id="starRating" formControlName="starRating">
+                                    <option value="1">1</option>
+                                    <option value="2">2</option>
+                                    <option value="3">3</option>
+                                    <option value="4">4</option>
+                                    <option value="5">5</option>
+                                    <option value="6">6</option>
+                                    <option value="7">7</option>
+                                    <option value="8">8</option>
+                                    <option value="9">9</option>
+                                    <option value="10">10</option>
+                                    <option value="11">11</option>
+                                    <option value="12">12</option>
+                                    <option value="13">13</option>
+                                    <option value="14">14</option>
+                                    
+                            </select>
                      
-                    <td class="rating"><span>{{review.starRating}}</span><i class="fa fa-star-o" aria-hidden="true"></i></td>
-                    <td class="listing"><span>{{review.reviewListing}}</span>{{showMatch()}}</td>
+                    </td>
+                    <td class="listing">
+                        <span *ngIf="!matchCurrent()">{{review.reviewListing}}</span>
+                         <input  *ngIf="matchCurrent()" formControlName="reviewListing"   name="reviewListing" id="reviewListing" type="text" /> 
+                    </td>
                     <td class="actionButton">
-                        <span>
-                            <button  (click)="onClick($event,'EDIT')" class='btnEdit'>Edit</button> 
-                        </span> 
+                         
+                            <button *ngIf="!matchCurrent()"  (click)="onClick($event,'EDIT')" class='btnEdit'>Edit</button>    
+                            <button *ngIf="matchCurrent()" (click)="onClick($event,'SAVE')" class='btnEdit'>Save</button> 
+                       
                     </td> 
+                    
                     <td class="actionButton">
-                        <span>
-                            <button (click)="onClick($event,'DELETE')" class='btnDelete'>Delete</button>
-                        </span>
+                       
+                            <button *ngIf="!matchCurrent()" (click)="onClick($event,'DELETE')" class='btnDelete'>Delete</button>                       
+                            <button *ngIf="matchCurrent()" (click)="onClick($event,'CANCEL')" class='btnDelete'>Cancel</button>
                         
                     </td> 
+                    </form>
   `
 })
 export class ReviewListRow { 
@@ -31,11 +60,17 @@ export class ReviewListRow {
 
     @Output('edit-event') editChange = new EventEmitter();
     private domNode: HTMLElement = null;
-    private its_me:string;
+    private reviewForm: FormGroup;
 
-    constructor(@Inject(ElementRef) elementRef: ElementRef)
+    constructor(@Inject(ElementRef) elementRef: ElementRef,fb: FormBuilder)
     {
        this.domNode = elementRef.nativeElement;
+       this.reviewForm = fb.group({
+        reviewListing: ['', Validators.required],
+        stampDate:[new Date()],
+        id:[-1],
+        starRating: ['',Validators.required]
+      })
 
     }
     ngAfterViewInit()
@@ -44,7 +79,7 @@ export class ReviewListRow {
         
     }
 
-    showMatch():boolean
+    matchCurrent():boolean
     {
         let hit:boolean = false;
         if (this.currentReview && this.currentReview.id === this.review.id)
@@ -63,7 +98,23 @@ export class ReviewListRow {
 
      onClick(ev,type)
     {
-          this.editChange.emit({"type": type,"selectedReview": this.review, idx: this.idx});
+          
+           if (type === "CANCEL")
+           {
+               this.reviewForm.setValue(this.review);
+               this.editChange.emit({"type": type,"selectedReview": this.review, idx: this.idx});
+           }
+           if (type == "EDIT")
+           {
+                
+               this.reviewForm.setValue(this.review);
+               this.editChange.emit({"type": type,"selectedReview": this.review, idx: this.idx});
+           }
+           if (type == "SAVE")
+           {
+               this.editChange.emit({"type": type,"selectedReview": this.reviewForm.value, idx: this.idx});
+           }
+          
     }
 
  

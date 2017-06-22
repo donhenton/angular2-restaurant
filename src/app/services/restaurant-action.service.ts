@@ -1,27 +1,30 @@
 import PubSubService, { PubSubSystem } from './pubsub.service';
 import { RestaurantService } from './restaurant.service';
-import { WaitRequest, Restaurant, messageType, RefreshMessage } from './../model/restaurant.interface';
+import { WaitRequest, Restaurant, messageType, RefreshMessage, ReviewDTO, ReviewPayload } from './../model/restaurant.interface';
 import { Injectable } from '@angular/core';
 import FeedbackMessageImpl from './../model/FeedbackMessageImpl';
-import { DELETE_RESTAURANT_TOPIC,FEEDBACK_TOPIC, REFRESH_TOPIC, EDIT_RESTAURANT_TOPIC,COMMIT_RESTAURANT_WILDCARD_TOPIC, WAIT_TOPIC, 
-    ADD_RESTAURANT_COMMIT_TOPIC, DELETE_RESTAURANT_COMMIT_TOPIC, SAVE_RESTAURANT_COMMIT_TOPIC } from './../services/pubsub.service'
+import {
+    DELETE_RESTAURANT_TOPIC, FEEDBACK_TOPIC, REFRESH_TOPIC, EDIT_RESTAURANT_TOPIC, 
+    COMMIT_RESTAURANT_WILDCARD_TOPIC, WAIT_TOPIC,
+    COMMIT_REVIEW_WILDCARD_TOPIC 
+} from './../services/pubsub.service'
 
 
 @Injectable()
 export class RestaurantActionService {
 
-    
+
     private sub: PubSubSystem;
 
     constructor(private restaurantService: RestaurantService,
         private subProvider: PubSubService) {
 
         this.sub = subProvider.getService();
-       
+
         this.sub.getChannel().subscribe(COMMIT_RESTAURANT_WILDCARD_TOPIC, (data, envelope: IEnvelope) => {
 
             let action = envelope.topic.split(".")[0];
-           // console.log(`got action ${action} in restaurant-action-service`)
+            // console.log(`got action ${action} in restaurant-action-service`)
             if (action === "ADD") {
                 this.handleAdd(data);
             }
@@ -35,7 +38,26 @@ export class RestaurantActionService {
 
 
         });
- 
+
+        this.sub.getChannel().subscribe(COMMIT_REVIEW_WILDCARD_TOPIC, (data: ReviewPayload, envelope: IEnvelope) => {
+
+            let action = envelope.topic.split(".")[0];
+
+
+            if (action === "SAVE") {
+                this.handleReviewSave(data);
+            }
+            if (action === "ADD") {
+                this.handleReviewAdd(data);
+            }
+            if (action === "DELETE") {
+                this.handleReviewDelete(data);
+            }
+
+
+
+        });
+
     }
 
     sendWait(state: boolean) {
@@ -48,14 +70,13 @@ export class RestaurantActionService {
         this.sub.getChannel().publish(FEEDBACK_TOPIC, f);
     }
 
-    sendRefresh(refreshRequest)
-    {
+    sendRefresh(refreshRequest) {
         this.sub.getChannel().publish(REFRESH_TOPIC, refreshRequest);
     }
 
 
     handleDelete(data) {
-       
+
         this.restaurantService.deleteRestaurant(data.selectedRestaurant).subscribe(
 
             () => {
@@ -91,7 +112,7 @@ export class RestaurantActionService {
                 this.sendRefresh({ doRefresh: true, selectedRestaurantId: idInfo.id })
                 let newItem: Restaurant = { ...data };
                 newItem.id = idInfo.id;
-                this.sub.getChannel().publish(EDIT_RESTAURANT_TOPIC,{ selectedRestaurant: newItem })
+                this.sub.getChannel().publish(EDIT_RESTAURANT_TOPIC, { selectedRestaurant: newItem })
 
             },
             err => { console.log(JSON.stringify(err)) }
@@ -120,5 +141,33 @@ export class RestaurantActionService {
 
 
     }
+
+
+    handleReviewAdd(data: ReviewPayload) {
+
+    }
+
+    handleReviewDelete(data: ReviewPayload) {
+
+    }
+
+
+    handleReviewSave(data: ReviewPayload) {
+        let f = new FeedbackMessageImpl();
+        f.message = "Review Saved";
+        f.show = true;
+        f.type = messageType.info;
+        this.sendWait(true)
+        this.restaurantService.saveReview(data).subscribe(
+
+            () => {
+                this.sendFeedback(f);
+                this.sendRefresh({ doRefresh: true, selectedRestaurantId: data.restaurantId })
+            },
+            err => { console.log(JSON.stringify(err)) }
+
+        )
+    }
+
 
 }

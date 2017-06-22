@@ -45,3 +45,9 @@ export interface FeedbackMessage
     type:messageType
 
 }
+
+export interface ReviewPayload
+{
+    restaurantId:number,
+    reviewDTO:ReviewDTO
+}

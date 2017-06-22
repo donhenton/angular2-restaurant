@@ -119,7 +119,7 @@ export class EditRestaurantContainer {
 
     handleCrudOperation(data: any, envelope: IEnvelope) {
         let action = envelope.topic.split('.')[0];
-        console.log("in edit-restaurant handleCrud " + action);
+       // console.log("in edit-restaurant handleCrud " + action);
         if (action === "DELETE") {
             this.backUp = null;
             this.editForm.reset();
