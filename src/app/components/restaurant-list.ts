@@ -5,7 +5,7 @@ import { RestaurantListRow } from './restaurant-list-row';
 import PubSubService, { PubSubSystem } from './../services/pubsub.service';
 import { WaitRequest, RefreshMessage } from './../model/restaurant.interface';
 import * as postal from 'postal';
-import { DELETE_RESTAURANT_COMMIT_TOPIC,REFRESH_TOPIC,CRUD_RESTAURANT_WILDCARD_TOPIC, WAIT_TOPIC, 
+import { DELETE_RESTAURANT_COMMIT_TOPIC,REFRESH_RESTAURANT_TOPIC,CRUD_RESTAURANT_WILDCARD_TOPIC, WAIT_TOPIC, 
     ADD_RESTAURANT_TOPIC, DELETE_RESTAURANT_TOPIC, EDIT_RESTAURANT_TOPIC } from './../services/pubsub.service'
 
 @Component({
@@ -70,7 +70,7 @@ export class RestaurantList {
         this.restaurantList = [];
         this.crudSubscription = this.sub.getChannel().subscribe(CRUD_RESTAURANT_WILDCARD_TOPIC,
             (data: any, envelope: IEnvelope) => this.handleCrudOperation(data, envelope));
-        this.refreshSubscription = this.sub.getChannel().subscribe(REFRESH_TOPIC,
+        this.refreshSubscription = this.sub.getChannel().subscribe(REFRESH_RESTAURANT_TOPIC,
             (data: any, envelope: IEnvelope) => this.handleRefresh(data, envelope));
 
         this.subscriptions.push(this.crudSubscription);

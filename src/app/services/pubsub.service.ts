@@ -23,13 +23,13 @@ export const COMMIT_REVIEW_WILDCARD_TOPIC = '*.commit.topic.'+ REVIEW_TOPIC;
 export const ADD_REVIEW_COMMIT_TOPIC = 'ADD.commit.topic.'+ REVIEW_TOPIC;
 export const SAVE_REVIEW_COMMIT_TOPIC = 'SAVE.commit.topic.'+ REVIEW_TOPIC;
 export const DELETE_REVIEW_COMMIT_TOPIC = 'DELETE.commit.topic.'+ REVIEW_TOPIC;
-
+export const REFRESH_REVIEW_TOPIC = "refresh.review.topic";
 
 
 
 export const FEEDBACK_TOPIC = 'feedback.topic';
 export const WAIT_TOPIC = "wait.topic";
-export const REFRESH_TOPIC = "refresh.topic."
+export const REFRESH_RESTAURANT_TOPIC = "refresh.restaurant.topic";
 
 
 @Injectable()

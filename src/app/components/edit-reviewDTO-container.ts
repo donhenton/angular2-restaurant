@@ -2,8 +2,8 @@ import { Component } from '@angular/core';
 import * as postal from "postal";
 import { FormControl, FormGroup, Validators, FormBuilder } from '@angular/forms';
 import PubSubService, { PubSubSystem } from './../services/pubsub.service';
-import {SAVE_REVIEW_COMMIT_TOPIC,EDIT_RESTAURANT_TOPIC, CRUD_RESTAURANT_WILDCARD_TOPIC } from './../services/pubsub.service'
-import { Restaurant, ReviewDTO ,ReviewPayload} from "../model/restaurant.interface";
+import { SAVE_REVIEW_COMMIT_TOPIC, EDIT_RESTAURANT_TOPIC, WAIT_TOPIC, REFRESH_REVIEW_TOPIC, CRUD_RESTAURANT_WILDCARD_TOPIC } from './../services/pubsub.service'
+import { WaitRequest, Restaurant, ReviewDTO, ReviewPayload } from "../model/restaurant.interface";
 import { ReviewListRow } from './review-list-row';
 
 
@@ -60,8 +60,25 @@ export class EditReviewDTOContainer {
         let s1 = this.sub.getChannel().subscribe(CRUD_RESTAURANT_WILDCARD_TOPIC,
             (data: any, envelope: IEnvelope) => this.handleCrudOperation(data.selectedRestaurant, envelope));
 
-        this.subscriptions.push(s1);
+        let s2 = this.sub.getChannel().subscribe(REFRESH_REVIEW_TOPIC,
+            (data: any, envelope: IEnvelope) => this.handleRefresh(data.selectedRestaurant, envelope));
 
+        this.subscriptions.push(s1);
+        this.subscriptions.push(s2);
+
+    }
+
+    sendWait(state: boolean) {
+        var waitMessage = <WaitRequest>{};
+        waitMessage.state = state;
+        this.sub.getChannel().publish(WAIT_TOPIC, waitMessage);
+    }
+
+    handleRefresh(data:Restaurant, envelope: IEnvelope) {
+         this.backUp = { ...data  };
+         this.reviewList = this.backUp.reviewDTOs;
+         this.reviewBackup = null;
+         this.sendWait(false);
     }
 
     dimThisRow(currentReview) {
@@ -81,6 +98,7 @@ export class EditReviewDTOContainer {
     handleCrudOperation(data: Restaurant, envelope: IEnvelope) {
 
         let action = envelope.topic.split('.')[0];
+        console.log("receiving crud " + JSON.stringify(envelope))
         if (action === "EDIT") {
             // console.log("data " + JSON.stringify(data.reviewDTOs))
 
@@ -124,11 +142,9 @@ export class EditReviewDTOContainer {
         } //end if review matches current review
 
 
-        if (ev.type == "DELETE")
-        {
+        if (ev.type == "DELETE") {
             let sure = window.confirm("Are you sure you want to delete the current review?");
-            if (sure)
-            {
+            if (sure) {
 
             }
             return;
@@ -139,23 +155,21 @@ export class EditReviewDTOContainer {
         console.log("review container " + JSON.stringify(ev));
         this.reviewBackup = { ...ev.selectedReview };
 
-        if (ev.type == "CANCEL")
-        {
+        if (ev.type == "CANCEL") {
             this.reviewBackup = null;
-            let t:IEnvelope = <IEnvelope>{};
+            let t: IEnvelope = <IEnvelope>{};
             t.topic = EDIT_RESTAURANT_TOPIC;
-            this.handleCrudOperation(this.backUp,t);
-           
+            this.handleCrudOperation(this.backUp, t);
+
             return;
         }
-        if (ev.type === 'SAVE')
-        {
+        if (ev.type === 'SAVE') {
             //console.log("the review listing is "+ev.selectedReview.reviewListing)
-            let payload:ReviewPayload = <ReviewPayload>{};
+            let payload: ReviewPayload = <ReviewPayload>{};
             payload.restaurantId = this.backUp.id;
             payload.reviewDTO = ev.selectedReview;
 
-            this.sub.getChannel().publish(SAVE_REVIEW_COMMIT_TOPIC,payload);
+            this.sub.getChannel().publish(SAVE_REVIEW_COMMIT_TOPIC, payload);
 
 
         }

@@ -4,9 +4,9 @@ import { WaitRequest, Restaurant, messageType, RefreshMessage, ReviewDTO, Review
 import { Injectable } from '@angular/core';
 import FeedbackMessageImpl from './../model/FeedbackMessageImpl';
 import {
-    DELETE_RESTAURANT_TOPIC, FEEDBACK_TOPIC, REFRESH_TOPIC, EDIT_RESTAURANT_TOPIC, 
-    COMMIT_RESTAURANT_WILDCARD_TOPIC, WAIT_TOPIC,
-    COMMIT_REVIEW_WILDCARD_TOPIC 
+    DELETE_RESTAURANT_TOPIC, FEEDBACK_TOPIC, REFRESH_RESTAURANT_TOPIC, EDIT_RESTAURANT_TOPIC,
+    COMMIT_RESTAURANT_WILDCARD_TOPIC, WAIT_TOPIC,REFRESH_REVIEW_TOPIC,
+    COMMIT_REVIEW_WILDCARD_TOPIC
 } from './../services/pubsub.service'
 
 
@@ -70,8 +70,8 @@ export class RestaurantActionService {
         this.sub.getChannel().publish(FEEDBACK_TOPIC, f);
     }
 
-    sendRefresh(refreshRequest) {
-        this.sub.getChannel().publish(REFRESH_TOPIC, refreshRequest);
+    sendRestaurantRefresh(refreshRequest) {
+        this.sub.getChannel().publish(REFRESH_RESTAURANT_TOPIC, refreshRequest);
     }
 
 
@@ -89,7 +89,7 @@ export class RestaurantActionService {
                 f.show = true;
                 f.type = messageType.info;
                 this.sendFeedback(f);
-                this.sendRefresh({ doRefresh: true, selectedRestaurantId: null });
+                this.sendRestaurantRefresh({ doRefresh: true, selectedRestaurantId: null });
                 this.sub.getChannel().publish(DELETE_RESTAURANT_TOPIC, {});
 
 
@@ -109,7 +109,7 @@ export class RestaurantActionService {
 
             (idInfo) => {
                 this.sendFeedback(f);
-                this.sendRefresh({ doRefresh: true, selectedRestaurantId: idInfo.id })
+                this.sendRestaurantRefresh({ doRefresh: true, selectedRestaurantId: idInfo.id })
                 let newItem: Restaurant = { ...data };
                 newItem.id = idInfo.id;
                 this.sub.getChannel().publish(EDIT_RESTAURANT_TOPIC, { selectedRestaurant: newItem })
@@ -119,6 +119,7 @@ export class RestaurantActionService {
 
         )
     }
+
 
 
     handleSave(data) {
@@ -132,13 +133,37 @@ export class RestaurantActionService {
 
             () => {
                 this.sendFeedback(f);
-                this.sendRefresh({ doRefresh: true, selectedRestaurantId: data.id })
+                this.sendRestaurantRefresh({ doRefresh: true, selectedRestaurantId: data.id })
             },
             err => { console.log(JSON.stringify(err)) }
 
         )
 
 
+
+    }
+
+    ///// reviews /////////////////////////////////////////
+
+
+    sendReviewRefresh(restaurantId: number,feedback:string) {
+        let f = new FeedbackMessageImpl();
+        f.message = feedback;
+        f.show = true;
+        f.type = messageType.info;
+        this.restaurantService.getRestaurant(restaurantId + "").subscribe(
+
+            (data) => {
+                this.sendFeedback(f);
+                this.sub.getChannel().publish(REFRESH_REVIEW_TOPIC,{selectedRestaurant:data})
+
+            },
+            err => {
+                console.log(JSON.stringify(err));
+                this.sendWait(false);
+            }
+
+        )
 
     }
 
@@ -153,16 +178,14 @@ export class RestaurantActionService {
 
 
     handleReviewSave(data: ReviewPayload) {
-        let f = new FeedbackMessageImpl();
-        f.message = "Review Saved";
-        f.show = true;
-        f.type = messageType.info;
+        
         this.sendWait(true)
         this.restaurantService.saveReview(data).subscribe(
 
             () => {
-                this.sendFeedback(f);
-                this.sendRefresh({ doRefresh: true, selectedRestaurantId: data.restaurantId })
+                 
+                this.sendReviewRefresh(data.restaurantId,"Review Saved");
+
             },
             err => { console.log(JSON.stringify(err)) }
 
