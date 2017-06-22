@@ -6,8 +6,16 @@
 * https://github.com/iRainSystem/angular2-gulp-ts
 
 
-## Development
-* npm run start -- start the application and watch modes, prior to first type npm run build
-* npm run clean 
+## Initialize Development
+* see https://github.com/kolorobot/angular2-typescript-gulp for prerequisites, gulp, gulp-cli, typings, typescript, ts-node installed globally
+* npm install
+* gulp clean
+* gulp build
+* npm run start (browser should appear)
+
+
+## Available npm scripts
+
+* npm run start 
 * npm run compile
 

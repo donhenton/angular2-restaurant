@@ -142,13 +142,15 @@ export class ReviewListRow {
             this.editChange.emit({ "type": type, "selectedReview": this.review, idx: this.idx });
         }
         if (type == "SAVE") {
-            if (this.review.id > -1) {
-                this.editChange.emit({ "type": type, "selectedReview": this.reviewForm.value, idx: this.idx });
-            }
-            else {
-                this.editChange.emit({ "type": "ADD", "selectedReview": this.reviewForm.value, idx: this.idx });
-            }
 
+            if (this.reviewForm.valid) {
+                if (this.review.id > -1) {
+                    this.editChange.emit({ "type": type, "selectedReview": this.reviewForm.value, idx: this.idx });
+                }
+                else {
+                    this.editChange.emit({ "type": "ADD", "selectedReview": this.reviewForm.value, idx: this.idx });
+                }
+            }
         }
 
     }
