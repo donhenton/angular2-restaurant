@@ -19,3 +19,8 @@
 * npm run start 
 * npm run compile
 
+## Production Prep
+
+https://stackoverflow.com/questions/37631098/how-to-bundle-an-angular-app-for-production
+
+  
