@@ -23,6 +23,5 @@
 
 https://stackoverflow.com/questions/37631098/how-to-bundle-an-angular-app-for-production
 https://angular.io/guide/aot-compiler 
-
-   
-  https://github.com/fintechneo/angular2-templates 
+https://www.usefuldev.com/blog/post/using-ngc-to-build-an-angular-2-library-project 
+https://github.com/fintechneo/angular2-templates 
