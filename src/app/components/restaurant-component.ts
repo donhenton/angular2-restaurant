@@ -6,9 +6,10 @@ import { RestaurantActionService } from './../services/restaurant-action.service
 import { WaitIndicator } from './wait-indicator';
 import PubSubService, { PubSubSystem } from './../services/pubsub.service';
 import { Subject } from "rxjs/Subject";
-import { FeedbackMessage } from './../model/restaurant.interface';
+import { FeedbackMessage,messageType } from './../model/restaurant.interface';
 import * as postal from 'postal';
 import { FEEDBACK_TOPIC } from './../services/pubsub.service'
+import {AppendPipe} from './../pipes/append-pipe';
 
 @Component({
   selector: 'restaurant-component',
@@ -19,12 +20,12 @@ import { FEEDBACK_TOPIC } from './../services/pubsub.service'
        margin: 20px;
        border: thin solid #ddd;
        height: 40px;
-       
+       padding: 5px;
       }
 
-    .restaurantApp   #mainDisplayMessage.success {
+    .restaurantApp   #mainDisplayMessage.info {
       color: blue; }
-    .restaurantApp   #displayMessage.error {
+    .restaurantApp   #mainDisplayMessage.error {
       color: red; }
 
 
@@ -36,8 +37,9 @@ import { FEEDBACK_TOPIC } from './../services/pubsub.service'
     <div id="reactRestaurantContainer">
         <div class="restaurantApp grouping">
             <wait-indicator [isProcessing]="true"></wait-indicator>
-            <div id="mainDisplayMessage">
-                {{displayMessage}}
+            <div [ngClass]="getMessageClass(displayMessage.type)"  
+            id="mainDisplayMessage">
+                <span *ngIf="displayMessage.show">{{displayMessage.message |appendPipe |uppercase }}</span>
                
             </div>
             <restaurant-list></restaurant-list>
@@ -60,13 +62,16 @@ import { FEEDBACK_TOPIC } from './../services/pubsub.service'
 })
 export class RestaurantComponent {
 
-  private displayMessage: string;
+  private displayMessage: FeedbackMessage;
   private sub: PubSubSystem;
   private subscriptions: ISubscriptionDefinition[] = [];
 
   constructor(private subProvider: PubSubService, private actionProvider: RestaurantActionService) {
 
-    this.displayMessage = "";
+    this.displayMessage = <FeedbackMessage>{};
+    this.displayMessage.message = "";
+    this.displayMessage.type = messageType.info;
+    this.displayMessage.show = false;
     this.sub = subProvider.getService();
     let s1 = this.sub.getChannel().subscribe(FEEDBACK_TOPIC,
       (data: any, envelope: IEnvelope) => this.handleFeedback(data, envelope));
@@ -79,17 +84,27 @@ export class RestaurantComponent {
 
   }
 
+  getMessageClass(type:messageType)
+  {
+      if (type == messageType.info)
+      {
+        return "info";
+
+      }
+      if (type == messageType.error)
+      {
+        return "error";
+      }
+      return "unknown"
+  }
+
 
   handleFeedback(data:FeedbackMessage,evelope:IEnvelope)
   {
-      if (data.show)
-    {
-      this.displayMessage = data.message;
-    }
-    else
-    {
-      this.displayMessage = "";
-    }
+  
+      this.displayMessage = data;
+    
+   
   }
 
 }
