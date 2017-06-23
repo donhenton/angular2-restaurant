@@ -22,5 +22,7 @@
 ## Production Prep
 
 https://stackoverflow.com/questions/37631098/how-to-bundle-an-angular-app-for-production
+https://angular.io/guide/aot-compiler 
 
-  
+   
+  https://github.com/fintechneo/angular2-templates 
