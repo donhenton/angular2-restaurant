@@ -5,7 +5,6 @@ import { EditReviewDTOContainer } from './edit-reviewDTO-container'
 import { RestaurantActionService } from './../services/restaurant-action.service';
 import { WaitIndicator } from './wait-indicator';
 import PubSubService, { PubSubSystem } from './../services/pubsub.service';
-import { Subject } from "rxjs/Subject";
 import { FeedbackMessage,messageType } from './../model/restaurant.interface';
 import * as postal from 'postal';
 import { FEEDBACK_TOPIC } from './../services/pubsub.service'
