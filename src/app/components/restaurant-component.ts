@@ -32,7 +32,7 @@ import {AppendPipe} from './../pipes/append-pipe';
   `],
   template: `
   
-  <h3>Restaurant List</h3>
+ 
     <div id="reactRestaurantContainer">
         <div class="restaurantApp grouping">
             <wait-indicator [isProcessing]="true"></wait-indicator>
