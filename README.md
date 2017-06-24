@@ -1,5 +1,8 @@
 # Angular2 Restaurant App
 
+## Upgraded
+This application has been updated to use Angular4 and the ng build system (see https://github.com/donhenton/angular4-restaurant)
+
 ## Gulp Workflow
 * http://blog.codeleak.pl/2016/03/quickstart-angular2-with-typescript-and.html
 * https://github.com/kolorobot/angular2-typescript-gulp
